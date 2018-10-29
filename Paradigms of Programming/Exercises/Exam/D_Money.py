@@ -14,11 +14,10 @@ def toCurrency(amount):
 			for value in currency[currencytype]:
 				quantity = 0
 
-				while amount >= value:
-					amount -= value
-					quantity += 1
+				if amount >= value:
+					quantity = int(amount / value)
+					amount -= quantity * value
 
-				if quantity > 0:
 					conversion[currencytype].append({
 						'quantity': quantity,
 						'value': value
