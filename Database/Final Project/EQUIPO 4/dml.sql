@@ -1,3 +1,5 @@
+---------------------- [START] INSERTS ----------------------
+
 --- Images (Users) ---
 INSERT INTO images (id, file_path, file_name, file_extension)
 VALUES (1, '/public/users/img_profile', 'user_michael', 'png');
@@ -77,7 +79,7 @@ INSERT INTO users (id, is_admin, first_name, last_name, photo_id, phone_number, 
 VALUES (5, 0, 'Roberto', 'Gomez Bolaños', 15, '5521150171', 'roberto_bolaños8@outlook.com', 'chespir8', 'GOBOXXXXXXZ51', 'Col. Mateo Bolaños #504');
 
 INSERT INTO users (id, is_admin, first_name, last_name, photo_id, phone_number, email, password, rfc, address) 
-VALUES (6, 0, 'Stephen', 'Hawking', 16, '5511170120', 'stivi.hawking@yahoo.com', 'blackwholebaby193', 'STHAXXXXXX320', 'Col. Benito Juarez #123');
+VALUES (6, 0, 'Stephen', 'Hawking', 16, '5511170120', 'stivi.hawking@yahoo.com', 'blackholebaby193', 'STHAXXXXXX320', 'Col. Benito Juarez #123');
 
 INSERT INTO users (id, is_admin, first_name, last_name, photo_id, phone_number, email, password, rfc, address) 
 VALUES (7, 0, 'Anton', 'Ego', 17, '5511170120', 'usa.anton_ego1@hotmail.com', 'iloveratatouille', 'EGANXXXXXX17T', 'Col. Ferreti #2030');
@@ -250,10 +252,111 @@ VALUES (5, 3);
 INSERT INTO orders (id, table_id)
 VALUES (1, 1);
 
---- Invoices ---
-INSERT INTO invoices (id, subtotal, total, order_id)
-VALUES (1, 100, 116, 1);
+INSERT INTO orders (id, table_id)
+VALUES (2, 3);
+
+INSERT INTO orders (id, table_id)
+VALUES (3, 10);
+
+INSERT INTO orders (id, table_id)
+VALUES (4, 9);
+
+INSERT INTO orders (id, table_id)
+VALUES (5, 7);
+
+INSERT INTO orders (id, table_id)
+VALUES (6, 2);
+
+INSERT INTO orders (id, table_id)
+VALUES (7, 4);
+
+INSERT INTO orders (id, table_id)
+VALUES (8, 5);
+
+INSERT INTO orders (id, table_id)
+VALUES (9, 6);
+
+INSERT INTO orders (id, table_id)
+VALUES (10, 8);
 
 --- Orders Has Saucers ---
 INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
 VALUES (1, 1, 1);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (2, 2, 2);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (3, 3, 4);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (4, 6, 4);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (4, 8, 4);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (5, 5, 2);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (5, 7, 2);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (6, 9, 1);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (6, 10, 1);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (7, 8, 2);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (8, 3, 1);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (8, 4, 1);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (8, 5, 1);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (8, 7, 3);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (9, 8, 2);
+
+INSERT INTO orders_has_saucers (order_id, saucer_id, quantity)
+VALUES (10, 2, 4);
+
+--- Invoices ---
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (1, 100, 116, 1);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (2, 139.9, 162.29, 2);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (3, 188.5, 218.66, 3);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (4, 139.8, 162.17, 4);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (5, 575, 667, 5);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (6, 199.3, 231.19, 6);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (7, 74.9, 86.89, 7);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (8, 1023.4, 1187.15, 8);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (9, 74.9, 86.89, 9);
+
+INSERT INTO invoices (id, subtotal, total, order_id)
+VALUES (10, 139.9, 162.29, 10);
+
+---------------------- INSERTS [END] ----------------------
