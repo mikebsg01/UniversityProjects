@@ -11,19 +11,18 @@ def toCurrency(amount):
 		'coins': []
 	}
 
-	while amount > 0:
-		for currencytype in currency:
-			for value in currency[currencytype]:
-				quantity = 0
+	for currencytype in currency:
+		for value in currency[currencytype]:
+			quantity = 0
 
-				if amount >= value:
-					quantity = int(amount / value)
-					amount -= quantity * value
+			if amount >= value:
+				quantity = int(amount / value)
+				amount -= quantity * value
 
-					conversion[currencytype].append({
-						'quantity': quantity,
-						'value': value
-					})
+				conversion[currencytype].append({
+					'quantity': quantity,
+					'value': value
+				})
 
 	return conversion
 
