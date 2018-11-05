@@ -360,3 +360,44 @@ INSERT INTO invoices (id, subtotal, total, order_id)
 VALUES (10, 139.9, 162.29, 10);
 
 ---------------------- INSERTS [END] ----------------------
+
+---------------------- [START] UPDATES ----------------------
+
+UPDATE users SET email = 'lmejia01@alumnos.uaq.mx' WHERE id = 3;
+
+UPDATE categories SET name = 'Ensalada suprema' WHERE id = 2;
+
+UPDATE saucers SET price = 200 WHERE id = 3;
+
+UPDATE saucers SET name = 'Hot cakes loquillos' WHERE id = 6;
+
+UPDATE saucers SET price = 190 WHERE id = 3;
+
+UPDATE users SET password = 'pass1234' WHERE id = 6;
+
+UPDATE users SET first_name = 'Benito Leopoldo' WHERE id = 10;
+
+UPDATE saucers SET description = 'Selecta carne de res, frijoles, cilantro y cebolla picada.' WHERE id = 4;
+
+---------------------- UPDATES [END] ----------------------
+
+---------------------- [START] DELETES ----------------------
+
+DELETE FROM menus_has_saucers WHERE menu_id = 3;
+
+DELETE FROM users WHERE id = 7;
+
+DELETE FROM orders_has_saucers WHERE order_id = 4;
+
+DELETE FROM menus_has_saucers WHERE menu_id = 4;
+
+DELETE FROM invoices WHERE id = 6;
+
+DELETE FROM menus WHERE id = 3;
+
+DELETE FROM users WHERE id = 5;
+
+DELETE FROM orders_has_saucers WHERE order_id = 1;
+
+---------------------- DELETES [END] ----------------------
+
