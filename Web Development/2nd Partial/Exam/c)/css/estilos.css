@@ -1,0 +1,45 @@
+*{
+	margin: 0px;
+	padding: 0px;
+}
+
+.altura{
+	height: 380px;
+	max-height: 380px;
+	overflow-y: scroll;
+	
+}
+h1{
+	font-family: monospace;
+	text-align: center;
+}
+div{
+	position: relative;
+	margin: 2% auto; 
+	width: 650px;
+	height: auto;
+}
+	
+		div ul li{
+			float: left;
+			display: block;
+			margin: 5px;
+		}
+			div ul li a{
+				text-decoration: none; 
+				color: red;
+				font-family: monospace;
+				font-size: 16px;
+			}
+			div ul li a:hover{
+				color: black;
+				font-size: 18px;
+			}
+	div p, div h3{
+		position: relative;
+		width: 90%;
+		margin:10px auto;
+		text-align: justify;
+	
+
+
