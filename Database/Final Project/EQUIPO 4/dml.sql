@@ -401,3 +401,35 @@ DELETE FROM orders_has_saucers WHERE order_id = 1;
 
 ---------------------- DELETES [END] ----------------------
 
+---------------------- [START] SELECTS ----------------------
+
+-- 1. Nombre de las categorías y total de platillos que conforman cada una:
+SELECT c.name AS "NombreCategoria", COUNT(s.name) AS "TotalPlatillos" 
+FROM saucers s, categories c
+WHERE s.id = c.id
+GROUP BY c.name;
+
+-- 2. Nombre del platillo y ID de la mesa que lo ordenó.
+SELECT saucers.name, orders.table_id FROM saucers
+INNER JOIN orders_has_saucers ON saucers.id = orders_has_saucers.saucer_id
+INNER JOIN orders ON orders_has_saucers.order_id = orders.id;
+
+-- 3. Precio más alto, más bajo y precio promedio de los platillos.
+SELECT MIN(price), MAX(price), AVG(price)
+FROM saucers;
+
+-- 4. Nombre del platillo, nombre de la categoría y nombre del menú donde se incluye:
+SELECT saucers.name AS "NombrePlatillo", categories.name AS "NombreCategoria", menus.name AS "NombreMenu" FROM saucers 
+INNER JOIN categories ON saucers.category_id = categories.id
+INNER JOIN menus_has_saucers ON saucers.id = menus_has_saucers.saucer_id
+INNER JOIN menus ON menus_has_saucers.menu_id = menus.id
+ORDER BY saucers.name ASC;
+
+-- 5. Subtotal, IVA y total de las cuentas con un total mayor a $1,000. Ordenado por fecha.
+SELECT subtotal, iva, total
+FROM invoices
+WHERE total > 1000
+ORDER BY created_at ASC;
+
+---------------------- SELECTS [END] ----------------------
+
