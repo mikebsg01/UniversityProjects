@@ -1,0 +1,91 @@
+/**
+ * Programa para generar un MENÚ de opciones en CONSOLA y
+ * calcular el área y perimtero de figuras geométricas.
+ *
+ * @author Serrato Guerrero Michael Brandon - Expediente: 258849
+ * @author Balderas Beltrán Alan
+ * @author Vargas Aguillón Jesús
+ */
+#include <stdio.h>
+
+/* Constantes */
+#define OPCION_1 1
+#define OPCION_2 2
+#define OPCION_3 3
+#define OPCION_SALIR 4
+
+/* Prototipos de funciones */
+void menu();
+int obtener_opcion();
+double obtener_valor();
+void ejecutar(int opc);
+
+
+/* Programa Principal */
+int main(int argc, char** argv) {
+	int opc;
+
+    printf("\n========== Programa: Calculo de area y perimetro de figuras geometricas ==========\n\n");
+
+	do {
+		menu();
+		opc = obtener_opcion();
+		ejecutar(opc);
+		printf("=================================================\n\n");
+	} while(opc != OPCION_SALIR);
+
+	return 0;
+}
+
+/* Implementación de funciones */
+
+void menu() {
+	printf("1. Cuadrado\n");
+	printf("2. Rectangulo\n");
+	printf("3. Circulo\n");
+	printf("4. Salir del sistema\n");
+	printf("\n\t> Elegir opcion: ");
+}
+
+
+int obtener_opcion() {
+	int opcion;
+
+	scanf("%d", &opcion);
+	return opcion;
+}
+
+double obtener_valor() {
+    double valor;
+
+    scanf("%lf", &valor);
+    return valor;
+}
+
+void ejecutar(int opc) {
+    printf("\n");
+
+    switch(opc) {
+        case OPCION_1:
+            double lado;
+
+            printf("\t***** Ha elegido la opcion #1 ***** \n\n"
+                   "========== CASO 1: Figura \"Cuadrado\" ==========\n\n"
+                   "Lado del cuadrado: ");
+            lado = obtener_valor();
+            printf("\nArea: %.2f\n"
+                   "Perimetro: %.2f\n\n",
+                   lado * lado,
+                   4 * lado);
+        break;
+        case OPCION_2:
+            printf("$$$$ Fue iniciada la opcion #2. \n");
+        break;
+        case OPCION_SALIR:
+            printf("Saliendo ... \n");
+        break;
+      default:
+        printf("SELECCION incorrecta. \n");
+        break;
+   }
+}

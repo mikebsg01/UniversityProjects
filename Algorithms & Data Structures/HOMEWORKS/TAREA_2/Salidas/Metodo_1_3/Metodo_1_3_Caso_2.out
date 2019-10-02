@@ -1,0 +1,23 @@
+========== METODO 1.3 BuscarEnOrden ==========
+
+CANTIDAD DE VALORES A AGREGAR: =================================================
+VALOR #1: VALOR #2: VALOR #3: VALOR #4: VALOR #5: VALOR #6: 
+ARREGLO: 
+3 4 7 8 9 12 
+=================================================
+BUSCAR VALOR: 
+EL VALOR 1 NO EXISTE EN EL ARREGLO
+=================================================
+BUSCAR VALOR: 
+ENCONTRADO EN LA POSICION #0
+=================================================
+BUSCAR VALOR: 
+ENCONTRADO EN LA POSICION #1
+=================================================
+BUSCAR VALOR: 
+ENCONTRADO EN LA POSICION #0
+=================================================
+BUSCAR VALOR: 
+EL VALOR 1 NO EXISTE EN EL ARREGLO
+=================================================
+BUSCAR VALOR: 

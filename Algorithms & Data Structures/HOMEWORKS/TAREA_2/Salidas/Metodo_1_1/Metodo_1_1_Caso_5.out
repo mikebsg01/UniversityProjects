@@ -1,0 +1,108 @@
+========== METODO 1.1 InsertarEnOrden ==========
+
+CANTIDAD DE VALORES A AGREGAR: =================================================
+VALOR #1: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+98 
+=================================================
+VALOR #2: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+77 98 
+=================================================
+VALOR #3: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+43 77 98 
+=================================================
+VALOR #4: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+21 43 77 98 
+=================================================
+VALOR #5: 
+
+VALOR INSERTADO EN LA POSICION #4
+
+ARREGLO: 
+21 43 77 98 503 
+=================================================
+VALOR #6: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+12 21 43 77 98 503 
+=================================================
+VALOR #7: 
+
+VALOR INSERTADO EN LA POSICION #3
+
+ARREGLO: 
+12 21 43 64 77 98 503 
+=================================================
+VALOR #8: 
+
+VALOR INSERTADO EN LA POSICION #2
+
+ARREGLO: 
+12 21 36 43 64 77 98 503 
+=================================================
+VALOR #9: 
+
+VALOR INSERTADO EN LA POSICION #7
+
+ARREGLO: 
+12 21 36 43 64 77 98 101 503 
+=================================================
+VALOR #10: 
+
+VALOR INSERTADO EN LA POSICION #5
+
+ARREGLO: 
+12 21 36 43 64 73 77 98 101 503 
+=================================================
+VALOR #11: 
+
+VALOR INSERTADO EN LA POSICION #10
+
+ARREGLO: 
+12 21 36 43 64 73 77 98 101 503 999 
+=================================================
+VALOR #12: 
+
+VALOR INSERTADO EN LA POSICION #11
+
+ARREGLO: 
+12 21 36 43 64 73 77 98 101 503 999 1000 
+=================================================
+VALOR #13: 
+
+VALOR INSERTADO EN LA POSICION #1
+
+ARREGLO: 
+12 12 21 36 43 64 73 77 98 101 503 999 1000 
+=================================================
+VALOR #14: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+11 12 12 21 36 43 64 73 77 98 101 503 999 1000 
+=================================================
+VALOR #15: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+7 11 12 12 21 36 43 64 73 77 98 101 503 999 1000 
+=================================================

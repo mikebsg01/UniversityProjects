@@ -1,0 +1,87 @@
+========== METODO 1.1 InsertarEnOrden ==========
+
+CANTIDAD DE VALORES A AGREGAR: =================================================
+VALOR #1: 
+
+VALOR INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+1 
+=================================================
+VALOR #2: 
+
+VALOR INSERTADO EN LA POSICION #1
+
+ARREGLO: 
+1 2 
+=================================================
+VALOR #3: 
+
+VALOR INSERTADO EN LA POSICION #2
+
+ARREGLO: 
+1 2 3 
+=================================================
+VALOR #4: 
+
+VALOR INSERTADO EN LA POSICION #1
+
+ARREGLO: 
+1 1 2 3 
+=================================================
+VALOR #5: 
+
+VALOR INSERTADO EN LA POSICION #2
+
+ARREGLO: 
+1 1 1 2 3 
+=================================================
+VALOR #6: 
+
+VALOR INSERTADO EN LA POSICION #4
+
+ARREGLO: 
+1 1 1 2 2 3 
+=================================================
+VALOR #7: 
+
+VALOR INSERTADO EN LA POSICION #6
+
+ARREGLO: 
+1 1 1 2 2 3 3 
+=================================================
+VALOR #8: 
+
+VALOR INSERTADO EN LA POSICION #7
+
+ARREGLO: 
+1 1 1 2 2 3 3 5 
+=================================================
+VALOR #9: 
+
+VALOR INSERTADO EN LA POSICION #8
+
+ARREGLO: 
+1 1 1 2 2 3 3 5 5 
+=================================================
+VALOR #10: 
+
+VALOR INSERTADO EN LA POSICION #9
+
+ARREGLO: 
+1 1 1 2 2 3 3 5 5 7 
+=================================================
+VALOR #11: 
+
+VALOR INSERTADO EN LA POSICION #10
+
+ARREGLO: 
+1 1 1 2 2 3 3 5 5 7 8 
+=================================================
+VALOR #12: 
+
+VALOR INSERTADO EN LA POSICION #7
+
+ARREGLO: 
+1 1 1 2 2 3 3 4 5 5 7 8 
+=================================================

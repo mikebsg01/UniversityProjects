@@ -1,0 +1,80 @@
+========== METODO 1.4 BuscarEInsertarEnOrden ==========
+
+CANTIDAD DE VALORES A AGREGAR: =================================================
+VALOR #1: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+8 
+=================================================
+VALOR #2: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+6 8 
+=================================================
+VALOR #3: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+3 6 8 
+=================================================
+VALOR #4: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #2
+
+ARREGLO: 
+3 6 7 8 
+=================================================
+VALOR #5: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #1
+
+ARREGLO: 
+3 5 6 7 8 
+=================================================
+VALOR #6: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+
+ARREGLO: 
+-99 3 5 6 7 8 
+=================================================
+VALOR #7: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #6
+
+ARREGLO: 
+-99 3 5 6 7 8 12 
+=================================================
+VALOR #8: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #1
+
+ARREGLO: 
+-99 -3 3 5 6 7 8 12 
+=================================================
+VALOR #9: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #2
+
+ARREGLO: 
+-99 -3 3 5 6 7 8 12 
+=================================================
+VALOR #10: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #5
+
+ARREGLO: 
+-99 -3 3 5 6 7 8 12 
+=================================================
+VALOR #11: 
+
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #8
+
+ARREGLO: 
+-99 -3 3 5 6 7 8 12 100 
+=================================================

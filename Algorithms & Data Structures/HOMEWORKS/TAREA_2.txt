@@ -1,0 +1,585 @@
+/**
+ * Insertar un número entero en un arreglo pero de manera ordenada;
+ * Sí el elemento a insertar ya existe se procede a insertarlo de
+ * nuevo pero después del número que es igual al insertado.
+ *
+ * @author Serrato Guerrero Michael Brandon - Expediente: 258849
+ * @author Balderas Beltrán Alan - Expediente: 237020
+ * @author Vargas Aguillón Jesús - Expediente: 258872
+ */
+#include <iostream>
+using namespace std;
+
+int insertarEnOrden(int a[], int* len, int v);
+void imprimirArreglo(int a[], int len);
+
+int main() {
+    int i,
+        valor,
+        cantidad,
+        posicion,
+        longitud = 0;
+
+    cout << "========== METODO 1.1 InsertarEnOrden ==========\n\n"
+         << "CANTIDAD DE VALORES A AGREGAR: ";
+    cin >> cantidad;
+    cout << "=================================================\n";
+
+    int arreglo[cantidad];
+
+    for (i = 0; i < cantidad; ++i) {
+        cout << "VALOR #" << (i + 1) << ": ";
+        cin >> valor;
+        cout << "\n";
+        posicion = insertarEnOrden(arreglo, &longitud, valor);
+        cout << "\nVALOR INSERTADO EN LA POSICION #" << posicion << "\n\n";
+        imprimirArreglo(arreglo, longitud);
+    }
+    return 0;
+}
+
+int insertarEnOrden(int a[], int* len, int v) {
+    int i,
+        temp1,
+        temp2,
+        pos = 0;
+
+    while (pos < *len && a[pos] <= v) {
+        ++pos;
+    }
+
+    ++*len;
+    temp1 = a[pos];
+
+    for (i = pos + 1; i < *len; ++i) {
+        temp2 = a[i];
+        a[i] = temp1;
+        temp1 = temp2;
+    }
+
+    a[pos] = v;
+    return pos;
+}
+
+void imprimirArreglo(int a[], int len) {
+    int i;
+
+    cout << "ARREGLO: \n";
+
+    for(i = 0; i < len; ++i) {
+        cout << a[i] << " ";
+    }
+    cout << "\n=================================================\n";
+}
+
+/*
+*** CORRIDA:
+
+ENTRADA:
+9
+1
+3
+4
+10
+4
+2
+-99
+100
+100
+
+SALIDA:
+========== METODO 1.1 InsertarEnOrden ==========
+CANTIDAD DE VALORES A AGREGAR: 9
+=================================================
+VALOR #1: 1
+VALOR INSERTADO EN LA POSICION #0
+ARREGLO: 
+1 
+=================================================
+VALOR #2: 3
+VALOR INSERTADO EN LA POSICION #1
+ARREGLO: 
+1 3 
+=================================================
+VALOR #3: 4
+VALOR INSERTADO EN LA POSICION #2
+ARREGLO: 
+1 3 4 
+=================================================
+VALOR #4: 10
+VALOR INSERTADO EN LA POSICION #3
+ARREGLO: 
+1 3 4 10 
+=================================================
+VALOR #5: 4
+VALOR INSERTADO EN LA POSICION #3
+ARREGLO: 
+1 3 4 4 10 
+=================================================
+VALOR #6: 2
+VALOR INSERTADO EN LA POSICION #1
+ARREGLO: 
+1 2 3 4 4 10 
+=================================================
+VALOR #7: -99
+VALOR INSERTADO EN LA POSICION #0
+ARREGLO: 
+-99 1 2 3 4 4 10 
+=================================================
+VALOR #8: 100
+VALOR INSERTADO EN LA POSICION #7
+ARREGLO: 
+-99 1 2 3 4 4 10 100 
+=================================================
+VALOR #9: 100
+VALOR INSERTADO EN LA POSICION #8
+ARREGLO: 
+-99 1 2 3 4 4 10 100 100 
+=================================================
+*/
+
+-----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Insertar un número entero en un arreglo pero de manera ordenada;
+ * Sí el elemento a insertar ya existe NO se debe insertar.
+ *
+ * @author Serrato Guerrero Michael Brandon - Expediente: 258849
+ * @author Balderas Beltrán Alan - Expediente: 237020
+ * @author Vargas Aguillón Jesús - Expediente: 258872
+ */
+#include <iostream>
+using namespace std;
+
+int insertarEnOrden(int a[], int* len, int v);
+void imprimirArreglo(int a[], int len);
+
+int main() {
+    int i,
+        valor,
+        cantidad,
+        posicion,
+        longitud = 0;
+
+    cout << "========== METODO 1.2 InsertarEnOrden ==========\n\n"
+         << "CANTIDAD DE VALORES A AGREGAR: ";
+    cin >> cantidad;
+    cout << "=================================================\n";
+
+    int arreglo[cantidad];
+
+    for (i = 0; i < cantidad; ++i) {
+        cout << "VALOR #" << (i + 1) << ": ";
+        cin >> valor;
+        cout << "\n";
+        posicion = insertarEnOrden(arreglo, &longitud, valor);
+        cout << "\nVALOR ENCONTRADO/INSERTADO EN LA POSICION #" << posicion << "\n\n";
+        imprimirArreglo(arreglo, longitud);
+    }
+    return 0;
+}
+
+int insertarEnOrden(int a[], int* len, int v) {
+    int i,
+        temp1,
+        temp2,
+        pos = 0;
+
+    while (pos < *len && a[pos] <= v) {
+        if (a[pos] == v) {
+            return pos;
+        }
+        ++pos;
+    }
+
+    ++*len;
+    temp1 = a[pos];
+
+    for (i = pos + 1; i < *len; ++i) {
+        temp2 = a[i];
+        a[i] = temp1;
+        temp1 = temp2;
+    }
+
+    a[pos] = v;
+    return pos;
+}
+
+void imprimirArreglo(int a[], int len) {
+    int i;
+
+    cout << "ARREGLO: \n";
+
+    for(i = 0; i < len; ++i) {
+        cout << a[i] << " ";
+    }
+    cout << "\n=================================================\n";
+}
+
+/*
+*** CORRIDA:
+
+ENTRADA:
+9
+4
+7
+8
+5
+7
+6
+5
+7
+4
+
+SALIDA:
+========== METODO 1.2 InsertarEnOrden ==========
+CANTIDAD DE VALORES A AGREGAR: 9
+=================================================
+VALOR #1: 4
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+ARREGLO: 
+4 
+=================================================
+VALOR #2: 7
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #1
+ARREGLO: 
+4 7 
+=================================================
+VALOR #3: 8
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #2
+ARREGLO: 
+4 7 8 
+=================================================
+VALOR #4: 5
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #1
+ARREGLO: 
+4 5 7 8 
+=================================================
+VALOR #5: 7
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #2
+ARREGLO: 
+4 5 7 8 
+=================================================
+VALOR #6: 6
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #2
+ARREGLO: 
+4 5 6 7 8 
+=================================================
+VALOR #7: 5
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #1
+ARREGLO: 
+4 5 6 7 8 
+=================================================
+VALOR #8: 7
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #3
+ARREGLO: 
+4 5 6 7 8 
+=================================================
+VALOR #9: 4
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+ARREGLO: 
+4 5 6 7 8 
+=================================================
+*/
+
+-----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Buscar un número entero en un arreglo ordenado, 
+ * sí lo encuentra retorna la posición
+ * del número encontrado en el arreglo; 
+ * sí no lo encuentra retorna -1.
+ *
+ * @author Serrato Guerrero Michael Brandon - Expediente: 258849
+ * @author Balderas Beltrán Alan - Expediente: 237020
+ * @author Vargas Aguillón Jesús - Expediente: 258872
+ */
+#include <iostream>
+#define NOT_FOUND -1
+using namespace std;
+
+int buscarEnOrden(int a[], int len, int v);
+void imprimirArreglo(int a[], int len);
+
+int main() {
+    int i,
+        valor,
+        cantidad,
+        posicion;
+
+    cout << "========== METODO 1.3 BuscarEnOrden ==========\n\n"
+         << "CANTIDAD DE VALORES A AGREGAR: ";
+    cin >> cantidad;
+    cout << "=================================================\n";
+
+    int arreglo[cantidad];
+
+    for (i = 0; i < cantidad; ++i) {
+        cout << "VALOR #" << (i + 1) << ": ";
+        cin >> arreglo[i];
+    }
+
+    cout << "\n";
+    imprimirArreglo(arreglo, cantidad);
+    cout << "BUSCAR VALOR: ";
+
+    while (cin >> valor) {
+        posicion = buscarEnOrden(arreglo, cantidad, valor);
+        cout << "\n";
+
+        if (posicion != NOT_FOUND) {
+            cout << "ENCONTRADO EN LA POSICION #" << posicion;
+        } else {
+            cout << "EL VALOR " << valor << " NO EXISTE EN EL ARREGLO";
+        }
+        
+        cout << "\n=================================================\n"
+             << "BUSCAR VALOR: ";
+    }
+    return 0;
+}
+
+int buscarEnOrden(int a[], int len, int v) {
+    int enmedio,
+        inicio = 0,
+        fin = len;
+
+    while (inicio < fin) {
+        enmedio = (inicio + fin) / 2;
+        
+        if (a[enmedio] < v) {
+            inicio = enmedio + 1; 
+        } else {
+            fin = enmedio;
+        }
+    }
+
+    if (a[inicio] != v) {
+        return NOT_FOUND;
+    }
+
+    return inicio;
+}
+
+void imprimirArreglo(int a[], int len) {
+    int i;
+
+    cout << "ARREGLO: \n";
+
+    for(i = 0; i < len; ++i) {
+        cout << a[i] << " ";
+    }
+    cout << "\n=================================================\n";
+}
+
+/*
+*** CORRIDA:
+
+ENTRADA:
+6
+3
+4
+7
+8
+9
+12
+1
+3
+4
+3
+1
+
+SALIDA:
+========== METODO 1.3 BuscarEnOrden ==========
+CANTIDAD DE VALORES A AGREGAR: 6
+=================================================
+VALOR #1: 3
+VALOR #2: 4
+VALOR #3: 7
+VALOR #4: 8
+VALOR #5: 9
+VALOR #6: 12
+ARREGLO: 
+3 4 7 8 9 12 
+=================================================
+BUSCAR VALOR: 1
+EL VALOR 1 NO EXISTE EN EL ARREGLO
+=================================================
+BUSCAR VALOR: 3
+ENCONTRADO EN LA POSICION #0
+=================================================
+BUSCAR VALOR: 4
+ENCONTRADO EN LA POSICION #1
+=================================================
+BUSCAR VALOR: 3
+ENCONTRADO EN LA POSICION #0
+=================================================
+BUSCAR VALOR: 1
+EL VALOR 1 NO EXISTE EN EL ARREGLO
+=================================================
+*/
+
+-----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Buscar e insertar en orden un número entero en un arreglo ordenado; 
+ * sí lo encuentra no lo duplica, retorna la posición donde se ubica; 
+ * sí no lo encuentra retorna la posición donde fue insertado.
+ *
+ * @author Serrato Guerrero Michael Brandon - Expediente: 258849
+ * @author Balderas Beltrán Alan - Expediente: 237020
+ * @author Vargas Aguillón Jesús - Expediente: 258872
+ */
+#include <iostream>
+#define NOT_FOUND -1
+using namespace std;
+
+int buscarEInsertarEnOrden(int a[], int* len, int v);
+int buscarEnOrden(int a[], int len, int v);
+int insertarEnOrden(int a[], int* len, int v);
+void imprimirArreglo(int a[], int len);
+
+int main() {
+    int i,
+        valor,
+        cantidad,
+        posicion,
+        longitud = 0;
+
+    cout << "========== METODO 1.4 BuscarEInsertarEnOrden ==========\n\n"
+         << "CANTIDAD DE VALORES A AGREGAR: ";
+    cin >> cantidad;
+    cout << "=================================================\n";
+
+    int arreglo[cantidad];
+
+    for (i = 0; i < cantidad; ++i) {
+        cout << "VALOR #" << (i + 1) << ": ";
+        cin >> valor;
+        cout << "\n";
+        posicion = buscarEInsertarEnOrden(arreglo, &longitud, valor);
+        cout << "\nVALOR ENCONTRADO/INSERTADO EN LA POSICION #" << posicion << "\n\n";
+        imprimirArreglo(arreglo, longitud);
+    }
+    return 0;
+}
+
+int buscarEInsertarEnOrden(int a[], int* len, int v) {
+    int posicion = buscarEnOrden(a, *len, v);
+
+    if (posicion == NOT_FOUND) {
+        return insertarEnOrden(a, len, v);
+    }
+
+    return posicion;
+}
+
+int insertarEnOrden(int a[], int* len, int v) {
+    int i,
+        temp1,
+        temp2,
+        pos = 0;
+
+    while (pos < *len && a[pos] <= v) {
+        ++pos;
+    }
+
+    ++*len;
+    temp1 = a[pos];
+
+    for (i = pos + 1; i < *len; ++i) {
+        temp2 = a[i];
+        a[i] = temp1;
+        temp1 = temp2;
+    }
+
+    a[pos] = v;
+    return pos;
+}
+
+int buscarEnOrden(int a[], int len, int v) {
+    int enmedio,
+        inicio = 0,
+        fin = len - 1;
+
+    while (inicio < fin) {
+        enmedio = (inicio + fin) / 2;
+
+        if (a[enmedio] < v) {
+            inicio = enmedio + 1; 
+        } else {
+            fin = enmedio;
+        }
+    }
+
+    if (a[inicio] != v) {
+        return NOT_FOUND;
+    }
+
+    return inicio;
+}
+
+void imprimirArreglo(int a[], int len) {
+    int i;
+
+    cout << "ARREGLO: \n";
+
+    for(i = 0; i < len; ++i) {
+        cout << a[i] << " ";
+    }
+    cout << "\n=================================================\n";
+}
+
+/*
+*** CORRIDA:
+
+ENTRADA:
+7
+21
+30
+15
+14
+26
+21
+14
+
+SALIDA:
+========== METODO 1.4 BuscarEInsertarEnOrden ==========
+CANTIDAD DE VALORES A AGREGAR: 7
+=================================================
+VALOR #1: 21
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+ARREGLO: 
+21 
+=================================================
+VALOR #2: 30
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #1
+ARREGLO: 
+21 30 
+=================================================
+VALOR #3: 15
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+ARREGLO: 
+15 21 30 
+=================================================
+VALOR #4: 14
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+ARREGLO: 
+14 15 21 30 
+=================================================
+VALOR #5: 26
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #3
+ARREGLO: 
+14 15 21 26 30 
+=================================================
+VALOR #6: 21
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #2
+ARREGLO: 
+14 15 21 26 30 
+=================================================
+VALOR #7: 14
+VALOR ENCONTRADO/INSERTADO EN LA POSICION #0
+ARREGLO: 
+14 15 21 26 30 
+=================================================
+*/
