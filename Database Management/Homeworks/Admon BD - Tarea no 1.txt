@@ -1,0 +1,220 @@
+Materia: ADMINISTRACIÓN DE BASE DE DATOS
+Maestro: Gerardo Rodríguez Rojano
+Fecha: 13 Febrero 2019
+
+------------------------------------------------------------------------------------------------------------------------
+
+Objetivos:
+
+       - Aplicación de SQL-DML
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+Fecha de Entrega:  20 Febrero 2019; (todo el día).
+
+Modalidad: En equipos de 2 a 3 integrantes.
+Forma de entregar:  enviar este archivo con formato de texto extensión .sql o .txt
+                    con el código solicitado en las CONSULTAS 
+                    al correo del maestro [ msigerardorr@gmail.com ]. 
+
+-----------------------------------------------------------------------------------------------------------------------
+ASUNTO:  Administracion Base de Datos - tarea no 1
+
+Mensaje: Expediente y Nombre completo de cada integrantes del equipo de trabajo.
+
+------------------------------------------------------------------------------------------------------------------------
+
+ 
+  T A R E A  NO. 1
+  ----------------
+
+  Datos de Integrantes:
+
+     Expediente   Nombre Completo (nombre y apellidos)
+     -----------  --------------------------------------------------------------
+	258849		Michael Brandon Serrato Guerrero
+	258877		Luz del Carmen Carbajal Pérez
+	258873		Karla Yamile Cruz Garcia
+	 
+------------------------------------------------------------------------------------------------------------------------
+
+Considere la siguiente base de datos:
+
+
+BASE DE BATOS
+-------------
+
+CREATE TABLE Frecuentan(
+   bebedor varchar(20) NOT NULL,
+   bar varchar(20) NOT NULL
+);
+
+-- Los Bares Sirven cervezas (diversas marcas de cerveza)
+CREATE TABLE Sirven(   
+   bar varchar(20) NOT NULL,
+   cerveza varchar(20) NOT NULL
+);
+
+-- A los Bebedores Les Gusta Beber determinadas marcas de cerveza
+CREATE TABLE Le_Gusta_Beber(   
+   bebedor varchar(20) NOT NULL,
+   cerveza varchar(20) NOT NULL
+);
+
+----- INSERTS
+insert into Frecuentan 	VALUES('Hugo','Los Correa');
+insert into Frecuentan 	VALUES('Hugo','Los Tres Amigos');
+insert into Frecuentan 	VALUES('Hugo','El Portal');
+insert into Frecuentan 	VALUES('Hugo','El Fuerte');
+insert into Frecuentan 	VALUES('Hugo','El Cortijo');
+
+insert into Frecuentan 	VALUES('Paco','Los Tres Amigos');
+insert into Frecuentan 	VALUES('Paco','El Cortijo');
+
+insert into Frecuentan 	VALUES('Luis','Los Correa');
+insert into Frecuentan 	VALUES('Luis','El Portal');
+
+insert into Frecuentan  VALUES('Tere','El Fuerte');
+-----------------------------------------------------------------
+
+insert into Sirven VALUES('Los Correa','Budweiser');
+insert into Sirven VALUES('Los Correa','Heineken');
+insert into Sirven VALUES('Los Correa','Tecate');
+insert into Sirven VALUES('Los Correa','Modelo Especial');
+
+insert into Sirven VALUES('Los Tres Amigos','Budweiser');
+insert into Sirven VALUES('Los Tres Amigos','Heineken');
+insert into Sirven VALUES('Los Tres Amigos','Tecate');
+insert into Sirven VALUES('Los Tres Amigos','Corona');
+
+insert into Sirven VALUES('El Portal','Budweiser');
+insert into Sirven VALUES('El Portal','Corona');
+insert into Sirven VALUES('El Portal','Sol');
+
+insert into Sirven VALUES('El Fuerte','Modelo Especial');
+
+insert into Sirven VALUES('El Cortijo','Indio');
+-----------------------------------------------------------------
+
+insert into Le_Gusta_Beber VALUES('Hugo','Budweiser');
+insert into Le_Gusta_Beber VALUES('Hugo','Modelo Especial');
+insert into Le_Gusta_Beber VALUES('Hugo','Corona');
+
+insert into Le_Gusta_Beber VALUES('Paco','Heineken');
+insert into Le_Gusta_Beber VALUES('Paco','Corona');
+
+insert into Le_Gusta_Beber VALUES('Luis','Heineken');
+insert into Le_Gusta_Beber VALUES('Luis','Tecate');
+insert into Le_Gusta_Beber VALUES('Luis','Corona');
+
+insert into Le_Gusta_Beber VALUES('Tere','Negra Modelo');
+------------------------------------------------------------------------
+
+CONSULTAS.
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+
+1. Imprima bebedores que frecuentan bares donde sirven cervezas que les gusten y
+   además frecuentan bares donde ninguna de las cervezas que surten les gusta.
+
+
+SELECT DISTINCT G.bebedor FROM Le_Gusta_Beber AS G
+	WHERE (
+		SELECT count(DISTINCT S.bar) AS C1 FROM Frecuentan AS F 
+			INNER JOIN Sirven AS S ON F.bar = S.bar 
+			WHERE F.bebedor = G.bebedor AND S.cerveza IN (
+				SELECT G2.cerveza FROM Le_Gusta_Beber AS G2 WHERE G2.bebedor = G.bebedor
+			)
+	) > 0 AND (
+		SELECT count(F2.bar) FROM Frecuentan AS F2
+			WHERE F2.bebedor = G.bebedor AND F2.bar NOT IN (
+				SELECT DISTINCT S.bar AS C1 FROM Frecuentan AS F 
+					INNER JOIN Sirven AS S ON F.bar = S.bar 
+					WHERE F.bebedor = G.bebedor AND S.cerveza IN (
+						SELECT G2.cerveza FROM Le_Gusta_Beber AS G2 WHERE G2.bebedor = G.bebedor
+				)
+			)
+	) > 0;
+
+
+2. Obtenga pares [bebedor, bar] que descubra a los bebedores que frecuentan bares donde 
+   sirven alguna cerveza que les gusta y además sirven alguna que no les gusta:
+
+
+SELECT * FROM Frecuentan AS F
+	WHERE (
+		SELECT count(S.cerveza) FROM Sirven AS S
+			WHERE S.bar = F.bar AND S.cerveza IN (
+				SELECT G.cerveza FROM Le_Gusta_Beber AS G WHERE G.bebedor = F.bebedor
+			)
+	) > 0 AND (
+		SELECT count(S.cerveza) FROM Sirven AS S
+			WHERE S.bar = F.bar AND S.cerveza NOT IN (
+				SELECT G.cerveza FROM Le_Gusta_Beber AS G WHERE G.bebedor = F.bebedor
+			)
+	) > 0;
+
+
+3. ¿Cuál es la cerveza que a todos los bebedores les gusta beber? (1 o más)
+
+
+SELECT G.cerveza AS "Cerveza", count(G.cerveza) AS "Popularidad" FROM Le_Gusta_Beber AS G 
+	GROUP BY G.cerveza 
+	ORDER BY "Popularidad" DESC
+	LIMIT 1;
+
+
+4. ¿Cuál es el bebedor que frecuenta todos los bares? (1 o más)
+
+
+SELECT Bebedores.nombre AS "Bebedor"
+	FROM	(
+			SELECT bebedor AS nombre, count(DISTINCT bar) AS visita FROM Frecuentan
+				GROUP BY nombre
+		) AS Bebedores,
+		(
+			SELECT count(DISTINCT bar) AS total FROM Sirven
+		) AS Bares
+	WHERE Bebedores.visita = Bares.total;
+
+
+5. Para cada cerveza, calcule el número de bares que la sirve.
+
+
+SELECT S.cerveza AS "Cerveza", count(S.bar) AS "No. de Bares que la sirven" FROM Sirven AS S
+	GROUP BY S.cerveza
+	ORDER BY "No. de Bares que la sirven" DESC;
+
+
+6. Para cada bar, calcule el número de bebedores que lo frecuenta.
+
+
+SELECT F.bar AS "Bar", count(F.bebedor) AS "No. de Bebedores que lo Frecuentan" FROM Frecuentan AS F
+	GROUP BY F.bar;
+
+
+7. Obtenga el bar que sirve la mayor cantidad de marcas de cerveza.
+
+
+SELECT B.bar AS "Bar", B.cantidad AS "Cantidad de Marcas de Cerveza" 
+	FROM (
+		SELECT bar, count(DISTINCT cerveza) AS cantidad FROM Sirven
+			GROUP BY bar
+	) AS B,
+	(
+		SELECT count(DISTINCT cerveza) AS mayor_cantidad FROM Sirven
+			GROUP BY bar
+			ORDER BY mayor_cantidad DESC
+			LIMIT 1
+	) AS T
+	WHERE B.cantidad = T.mayor_cantidad;
+
+
+-------------------------------------------------------------------------------------------------------------
+                                             F   I   N
+-------------------------------------------------------------------------------------------------------------
+
+

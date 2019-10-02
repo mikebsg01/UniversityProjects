@@ -1,0 +1,520 @@
+Materia: Administración de Bases de Datos
+Tarea: No. 3
+Nombre: Procedimientos Almacenados en PostgreSQL.
+--------------------------------------------------------------------------------------
+
+Fecha de Entrega:  09/Marzo/2018
+Modalidad: equipos de hasta 3 integrantes.
+
+
+Forma de Entregar:  entregar este archivo con los códigos solicitados
+                    al correo [ msigerardorr@gmail.com ]
+
+
+
+ASUNTO: Administracion BD - Tarea no 3
+
+MENSAJE:  escribir los nombres completos y expedientes de los integrantes de 
+          equipo (además de escribirlos dentro de este documento).
+
+
+--------------------------------------------------------------------------------------
+
+AUTORES DE LA TAREA no 3
+
+Expediente y Nombre completo de integrantes: 
+
+ 258849		Michael Brandon Serrato Guerrero
+ 258877		Luz del Carmen Carbajal Pérez
+ 258873		Karla Yamile Cruz Garcia
+
+--------------------------------------------------------------------------------------
+
+Instrucciones:
+
+  1. Crear la Base de datos "dreamhome". Ver script al final de este documento.
+  2. Escribir los procedimientos almacenados que se solicitan en plpgsql, postgresql.
+
+
+--------------------------------------------------------------------------------------
+
+CREAR EL CÓDIGO plpgSQL DE LOS SIGUIENTES REQUERIMIENTOS:
+
+
+1. Escribir un procedimiento almacenado (función almacenada) para Insertar un Staff y debe 
+   regresar un valor booleano para indicar si fue posible o no la inserción.
+
+
+CREATE OR REPLACE FUNCTION createStaff(_staffNo StaffNumber, _branchNo BranchNumber, _fName Varchar(20), _lName Varchar(20), _position JobType, _sex SexType, _dOB Date, _salary Numeric(8,2)) RETURNS BOOLEAN AS $$
+BEGIN
+	INSERT INTO Staff (staffNo, branchNo, fName, lName, position, sex, dOB, salary)
+		VALUES (_staffNo, _branchNo, _fName, _lName, _position, _sex, _dOB, _salary);
+	RETURN found;
+END
+$$ LANGUAGE 'plpgsql';
+
+SELECT createStaff('XYZ5','B005','Mike','Serrato','Manager','M',TO_DATE('28-06-1991','dd/mm/yyyy'),80000);
+
+
+2. Escribir un procedimiento almacenado (función almacenada) para eliminar un Staff y debe 
+   regresar un valor booleano para indicar si fue posible o no la eliminación.
+
+
+CREATE OR REPLACE FUNCTION deleteStaff(_staffNo StaffNumber) RETURNS BOOLEAN AS $$
+BEGIN
+	DELETE FROM Staff WHERE staffNo = _staffNo;
+	RETURN found;
+END
+$$ LANGUAGE 'plpgsql';
+
+SELECT deleteStaff('XYZ3');
+
+
+3. Escribir un procedimiento almacenado (función almacenada) para Modificar los datos de 
+   puesto y salario de un empleado. Debe regresar un valor booleano para indicar si fue 
+   posible o no la modificación.
+
+
+CREATE OR REPLACE FUNCTION updateStaff(_staffNo StaffNumber, _position JobType, _salary Numeric(8,2)) RETURNS BOOLEAN AS $$
+BEGIN
+	IF _position IS NULL THEN
+		UPDATE Staff SET salary = _salary WHERE staffNo = _staffNo;
+		RETURN found;
+	ELSIF _salary IS NULL THEN
+		UPDATE Staff SET position = _position WHERE staffNo = _staffNo;
+		RETURN found;
+	END IF;
+
+	UPDATE Staff SET position = _position, salary = _salary WHERE staffNo = _staffNo;
+	RETURN found;
+END
+$$ LANGUAGE 'plpgsql';
+																								
+SELECT updateStaff('SG5', 'Manager', '26000');
+
+
+4. Escribir un procedimiento almacenado para saber cuáles son las visitas registradas a las 
+   propiedades (inmuebles) de un staff dado:
+
+
+   [  staffNo  fname  lname  propertyNo  street  city  clientNo  viewdate ]   
+
+
+   el método recibe como parámetro la clave de un staff y buscará las visitas de sus inmuebles
+   asignados;
+   el método devuelve un conjunto de registros del tipo que se ajuste a la salida solicitada 
+   en esta pregunta.
+
+
+CREATE OR REPLACE FUNCTION visitsToPropertiesByStaff(_staffNo StaffNumber) 
+RETURNS TABLE (staffNo StaffNumber, fname Varchar(20), lname Varchar(20), propertyNo PropertyNumber, street Street, city City, clientNo ClientNumber, viewdate Date) AS $$
+BEGIN
+	RETURN QUERY
+	SELECT s.staffNo, s.fname, s.lname, pr.propertyNo, pr.street, pr.city, v.clientNo, v.viewdate
+	FROM Staff AS s
+	INNER JOIN PropertyForRent pr
+		ON pr.staffNo = s.staffNo
+	INNER JOIN Viewing v
+		ON v.propertyNo = pr.propertyNo
+	WHERE s.staffNo = _staffNo
+	ORDER BY v.viewdate ASC;
+END
+$$ LANGUAGE 'plpgsql';
+
+SELECT * FROM visitsToPropertiesByStaff('SA9');
+
+
+5. Escribir un procedimiento almacenado sin parámetros que devuelve un conjunto de registros
+   con todos los datos de las sucursales que tienen la mayor cantidad de propiedades registradas.
+   Recordar que los dueños de las propiedades (inmuebles) registran sus propiedades en alguna
+   sucursal.
+
+     [  branchNo  street  city  postcode  ]
+
+
+CREATE OR REPLACE FUNCTION branchesWithMoreProperties() RETURNS SETOF Branch AS $$
+DECLARE
+	maxProperties Int = 0;
+
+BEGIN
+	SELECT count(pr.propertyNo) totalProperties INTO maxProperties
+	FROM Branch b
+	INNER JOIN PropertyForRent pr
+		ON pr.branchNo = b.branchNo
+	GROUP BY b.branchNo
+	ORDER BY totalProperties DESC
+	LIMIT 1;
+	
+	RETURN QUERY
+	SELECT b.*
+	FROM Branch b
+	WHERE (
+		SELECT count(pr.propertyNo)
+		FROM PropertyForRent pr
+		WHERE pr.branchNo = b.branchNo
+	) = maxProperties;
+END
+$$ LANGUAGE 'plpgsql';
+
+SELECT * FROM branchesWithMoreProperties();
+
+
+6. Escribir un procedimiento almacenado que recibe como parámetro dos fechas las cuales
+   representan un rango de tiempo. La fecha es con formato 'dd-mm-yyyy'.
+   El procedimiento devuelve un conjunto de todas las propiedades junto con el número de
+   visitas que ha tenido en ese rango de fechas.
+   Desplegar los datos de clave propiedad y su número de visitas.
+
+   Por ejemplo, visitas dentro del rango: '1-4-2004','20-9-2004'.
+
+   [ propertyNo   número_de_visitas]
+
+        PA00            1
+        PL31            1
+        PL79            1
+        PG58            2
+        PA12            3
+        PH54            3
+        PH92            3
+        PG24            4
+        PG79            4        
+    ---------------------------------
+
+
+CREATE OR REPLACE FUNCTION visitsOfPropertiesBetween(_startDate varchar(10), _endDate varchar(10))
+RETURNS TABLE (propertyNo PropertyNumber, visits bigint) AS $$
+DECLARE
+	startDate DATE := TO_DATE(_startDate, 'dd-mm-yyyy');
+	endDate DATE := TO_DATE(_endDate, 'dd-mm-yyyy');
+BEGIN
+	IF startDate > endDate THEN
+		RAISE EXCEPTION 'La fecha de inicio no puede ser mayor a la fecha de término.';																						  
+	END IF;																						
+																							  
+	RETURN QUERY
+	SELECT pr.propertyNo, count(v.*) visits
+	FROM PropertyForRent pr
+	INNER JOIN Viewing v
+		ON v.propertyNo = pr.propertyNo
+	WHERE v.viewdate BETWEEN startDate AND endDate
+	GROUP BY pr.propertyNo
+	ORDER BY pr.propertyNo ASC;
+END;
+$$ LANGUAGE 'plpgsql';
+																							
+SELECT * FROM visitsOfPropertiesBetween('20-04-2004', '28-04-2004');
+
+
+7. Escribir un procedimiento almacenado que recibe como parámetro dos fechas las cuales
+   representan un rango de tiempo. La fecha es con formato 'dd-mm-yyyy'.
+   El procedimiento devuelve un conjunto de todas las propiedades junto con el número de
+   visitas que ha tenido en ese rango de fechas pero de aquellas propiedades que tienen el
+   primero y segundo lugar de ser las más visitadas por los clientes.
+   Desplegar los datos de clave propiedad y su número de visitas y ordenando la salida de 
+   las que tienen el mayor número de visitas a las que tienen menos, es decir, primero las 
+   de cantidad de visitas a primer lugar, luego las de cantidad de visitas a segundo lugar.
+
+
+   Por ejemplo, visitas dentro del rango: '1-4-2004','20-9-2004'.
+
+   [ propertyNo   número_de_visitas]
+
+        PG24            4
+        PG79            4   
+        PA12            3
+        PH54            3
+        PH92            3     
+    ---------------------------------
+
+
+CREATE OR REPLACE FUNCTION visitsOfMostPopularProperties(_startDate varchar(10), _endDate varchar(10))
+RETURNS TABLE (propertyNo PropertyNumber, visits bigint) AS $$
+DECLARE
+	startDate DATE := TO_DATE(_startDate, 'dd-mm-yyyy');
+	endDate DATE := TO_DATE(_endDate, 'dd-mm-yyyy');
+BEGIN
+	IF startDate > endDate THEN
+		RAISE EXCEPTION 'La fecha de inicio no puede ser mayor a la fecha de término.';																						  
+	END IF;																						
+	
+	RETURN QUERY
+	SELECT Properties.propertyNo, Properties.visits FROM (
+		SELECT DISTINCT count(v.*) maxVisits
+		FROM PropertyForRent pr
+		INNER JOIN Viewing v
+			ON v.propertyNo = pr.propertyNo
+		WHERE v.viewdate BETWEEN startDate AND endDate
+		GROUP BY pr.propertyNo
+		ORDER BY maxVisits DESC
+		LIMIT 2
+	) Tmp,
+	(
+		SELECT pr.propertyNo, count(v.*) visits 
+		FROM PropertyForRent pr
+		INNER JOIN Viewing v
+			ON v.propertyNo = pr.propertyNo
+		WHERE v.viewdate BETWEEN startDate AND endDate
+		GROUP BY pr.propertyNo
+	) Properties
+	WHERE Properties.visits = Tmp.maxVisits
+	ORDER BY Properties.visits DESC;
+END;
+$$ LANGUAGE 'plpgsql';
+																							
+SELECT * FROM visitsOfMostPopularProperties('21-04-2004', '28-06-2004');
+
+
+8. Escribir un procedimiento almacenado para descubrir a los empleados de toda la empresa Dreamhome
+   que tienen un salario mensual mayor o igual a la media de salario del departamento dado.
+
+   El procedimiento recibe la clave del departamento y muestra una vista como la siguiente, veamos,
+
+   por ejemplo, si la media de salario del departamento 'B001' es 1500 el informe sería así:
+
+   [ clave_empleado  nombre_completo_empleado  salario_mensual_empleado cantidad_mayor_al_promedio ]
+
+            A01      GUZMAN ARENAS ROGELIO         1500                           0
+            A34      ARIAS SERNA   MARIA           1800                         300
+            B21      ZAVALA MORENO LUCERO          1950                         450
+            B56      DELGADO RIVAS ANDRES          1650                         150
+           ---------------------------------------------------------------------------
+
+   el cálculo es encontrar el salario que cumpla con la media del salario del departamento dado.
+
+
+CREATE OR REPLACE FUNCTION salaryReportByDepartment(_branchNo BranchNumber)
+RETURNS TABLE ("staffNo" StaffNumber, "fullName" text, "salary" Numeric(8,2), "amountGreaterThanAverage" Numeric(8,2)) AS $$
+DECLARE
+	average Numeric(8, 2) := 0;
+BEGIN
+	SELECT ROUND(AVG(s.salary), 2) INTO average FROM Staff s
+	WHERE s.branchNo = _branchNo;
+
+	RETURN QUERY
+	SELECT s.staffNo, (s.fName || ' ' || s.lName) fullName, s.salary, ROUND(s.salary - average, 2) amountGreaterThanAverage
+	FROM Staff s
+	WHERE s.branchNo = _branchNo AND s.salary >= average;
+END;
+$$ LANGUAGE 'plpgsql';
+
+SELECT * FROM salaryReportByDepartment('B003');	
+
+
+------------------------------------------------------------------------------------------------------
+
+
+                                                    A N E X O
+                                                    ---------
+CASO DE ESTUDIO
+
+SISTEMA:  dreamhome
+FUENTE :  Libro de texto  DATABASE SYSTEMS: a practical approach to design, implementation and management
+                          Connolly & Begg
+Página :  80
+
+/* POSTGRESQL */
+
+/* Domains */
+
+Create domain PropertyNumber as Varchar(4);
+
+Create domain Street as Varchar(25);
+
+Create domain City as Varchar(15);
+
+Create domain PostCode as Varchar(8);
+
+Create domain PropertyType as Char(1) Check(VALUE IN ('B','F','H','L'));
+
+Create domain PropertyRooms as Smallint Check(VALUE BETWEEN 1 AND 15);
+
+Create domain PropertyRent as Numeric(6,2) Check(VALUE BETWEEN 0 AND 9999.99);
+
+Create domain JobType as Varchar(11) Check(VALUE IN ('Manager','Assistant','Supervisor'));
+
+Create domain SexType as Char(1) Default 'M' Check(VALUE IN ('M','F'));
+
+Create domain StaffNumber as Varchar(4);
+
+Create domain BranchNumber as Varchar(4);
+
+Create domain OwnerNumber as Varchar(5);
+
+Create domain ClientNumber as Varchar(5);
+
+Create domain PreferenceType as Varchar(12) Check (VALUE IN ('Flat','House'));
+
+Create domain MaximumRent as Numeric(8,2) Default 300 Check(VALUE BETWEEN 300 AND 999999.99);
+
+
+
+/* Create Tables */
+
+
+Create table Branch (
+	branchNo BranchNumber NOT NULL,
+	street Street NOT NULL,
+	city City NOT NULL,
+	postcode Postcode NOT NULL,
+ primary key (branchNo)
+);
+
+
+
+Create table Staff (
+	staffNo StaffNumber NOT NULL,
+	branchNo BranchNumber NOT NULL,
+	fName Varchar(20) NOT NULL,
+	lName Varchar(20),
+	position JobType NOT NULL,
+	sex SexType Not Null,
+	dOB Date,
+	salary Numeric(8,2) NOT NULL Default 0.0,
+    primary key (staffNo)
+);
+
+
+Create table Client (
+	clientNo ClientNumber NOT NULL,
+	fName Varchar(20) NOT NULL,
+	lName Varchar(20) NOT NULL,
+	telNo Varchar(20) NOT NULL,
+	preferType PreferenceType NOT NULL,
+	maxRent MaximumRent,
+ primary key (clientNo)
+);
+
+
+Create table PrivateOwner  (
+	ownerNo OwnerNumber NOT NULL,
+	fName Varchar(20) NOT NULL,
+	lName Varchar(20) NOT NULL,
+	address Varchar(30) NOT NULL,
+	telNo Varchar(20),
+   primary key (ownerNo)
+);
+
+Create table PropertyForRent  (
+	propertyNo PropertyNumber NOT NULL,
+	staffNo StaffNumber,
+	branchNo BranchNumber NOT NULL,
+	ownerNo OwnerNumber  NOT NULL,
+	street Street NOT NULL,
+	city City NOT NULL,
+	postCode PostCode NOT NULL,
+	propertyType PropertyType NOT NULL,
+	rooms PropertyRooms NOT NULL,
+	rent PropertyRent NOT NULL,
+     primary key (propertyNo)
+);
+
+
+Create table Viewing (
+	clientNo ClientNumber NOT NULL,
+	propertyNo PropertyNumber NOT NULL,
+	viewDate Date NOT NULL,
+	commentarioario Varchar(20),
+     primary key (clientNo,propertyNo)
+);
+
+Create table Registration (
+	clientNo ClientNumber NOT NULL,
+	branchNo BranchNumber NOT NULL,
+	staffNo StaffNumber,
+	dateJoined Date,
+     primary key (clientNo)
+);
+
+
+/* Create Foreign Keys */
+
+
+Alter table Staff add  foreign key (branchNo) references Branch (branchNo) on update cascade on delete set null;
+
+Alter table PropertyForRent add  foreign key (branchNo) references Branch (branchNo) on update cascade on delete set null;
+Alter table PropertyForRent add  foreign key (staffNo) references Staff (staffNo) on update cascade on delete set null;
+Alter table PropertyForRent add  foreign key (ownerNo) references PrivateOwner (ownerNo) on update cascade on delete cascade;
+
+Alter table Viewing add  foreign key (propertyNo) references PropertyForRent (propertyNo) on update cascade on delete cascade;
+Alter table Viewing add  foreign key (clientNo) references Client (clientNo) on update cascade on delete cascade;
+
+Alter table Registration add  foreign key (clientNo) references Client(clientNo) on update cascade on delete cascade;
+Alter table Registration add  foreign key (branchNo) references Branch(branchNo) on update cascade on delete cascade;
+Alter table Registration add  foreign key (staffNo) references Staff(staffNo) on update cascade on delete cascade;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+
+--- Branch 
+INSERT INTO Branch VALUES('B005','22 Deer Rd','London','SW14EH');
+INSERT INTO Branch VALUES('B007','16 Argyll St','Aberdeen','AB23SU');
+INSERT INTO Branch VALUES('B003','163 Main St','Glasgow','G119QX');
+INSERT INTO Branch VALUES('B004','32 Manse Rd','Bristol','BS991NZ');
+INSERT INTO Branch VALUES('B002','56 Clover Dr','London','NW106EU');
+
+
+--- Staff 
+INSERT INTO Staff VALUES('SL21','B005','John','White','Manager','M',TO_DATE('01-10-1945','dd/mm/yyyy'),30000);
+INSERT INTO Staff VALUES('SG37','B003', 'Ann','Beech','Assistant','F',TO_DATE('10-11-1960','dd/mm/yyyy'),12000);
+INSERT INTO Staff VALUES('SG14','B003','David','Ford','Supervisor','M',TO_DATE('24-03-1958','dd/mm/yyyy'),18000);
+INSERT INTO Staff VALUES('SA9','B007','Mary','Howe','Assistant','F',TO_DATE('19-02-1970','dd/mm/yyyy'),9000);
+INSERT INTO Staff VALUES('SG5','B003','Susan','Brand','Manager','F',TO_DATE('03-06-1940','dd/mm/yyyy'),24000);
+INSERT INTO Staff VALUES('SL41','B005','Julie','Lee','Assistant','F',TO_DATE('13-06-1965','dd/mm/yyyy'),9000);
+
+
+--- PrivateOwner (dueños de los inmuebles)
+INSERT INTO PrivateOwner VALUES('CO46','Joe','Keogh','2 Fergus Dr, Aberdeen AB27SX','01224-861212');
+INSERT INTO PrivateOwner VALUES('CO87','Carol','Farrel','6 Achray St, Glasgow G329DX','0141-357-7419');
+INSERT INTO PrivateOwner VALUES('CO40','Tina','Murphy','63 Well St, Glasgow G42','0141-943-1728');
+INSERT INTO PrivateOwner VALUES('CO93','Tony','Shaw','12 Park Pl, Glasgow G40QR','0141-225-7025');
+
+
+--- PropertyForRent 
+INSERT INTO PropertyForRent VALUES('PA14','SA9','B007','CO46','16 Holhead','Aberdeen','AB75SU','H',6,650);
+INSERT INTO PropertyForRent VALUES('PL94','SL41','B005','CO87','6 Argyll St','London','NW2','F',4,400);
+INSERT INTO PropertyForRent VALUES('PG4',NULL,'B003','CO40','6 Lawrence','Glasgow','G119QX','F',3,350);
+INSERT INTO PropertyForRent VALUES('PG36','SG37','B003','CO93','2 Manor Rd','Glasgow','G32QX','F',3,375);
+INSERT INTO PropertyForRent VALUES('PG21','SG37','B003','CO87','18 Dale Rd','Glasgow','G12','H',5,600);
+INSERT INTO PropertyForRent VALUES('PG16','SG14','B003','CO93','5 Novar Dr','Glasgow','G129AX','F',4,450);
+
+
+--- Client 
+INSERT INTO Client VALUES('CR76','John','Kay','0207-774-5632','Flat',425);
+INSERT INTO Client VALUES('CR56','Aline','Stewart','0141-848-1825','Flat',350);
+INSERT INTO Client VALUES('CR74','Mike','Ritchie','01475-392178','House',750);
+INSERT INTO Client VALUES('CR62','Mary','Tregear','01224-196720','Flat',600);
+
+
+--- Viewing  (Visitas a inmuebles por los clientes)
+INSERT INTO Viewing VALUES('CR56','PA14',TO_DATE('24-05-2004','dd/mm/yyyy'),'too small');
+INSERT INTO Viewing VALUES('CR76','PG4',TO_DATE('20-04-2004','dd/mm/yyyy'),'');
+INSERT INTO Viewing VALUES('CR56','PG4',TO_DATE('26-05-2004','dd/mm/yyyy'),'small');
+INSERT INTO Viewing VALUES('CR62','PA14',TO_DATE('14-05-2004','dd/mm/yyyy'),'small dining room');
+INSERT INTO Viewing VALUES('CR56','PG36',TO_DATE('28-04-2004','dd/mm/yyyy'),'good');
+INSERT INTO Viewing VALUES('CR62','PG36',TO_DATE('29-05-2004','dd/mm/yyyy'),'good');
+INSERT INTO Viewing VALUES('CR56','PG16',TO_DATE('26-06-2004','dd/mm/yyyy'),'good');
+
+
+INSERT INTO Viewing VALUES('CR56','PA14',TO_DATE('4-02-2005','dd/mm/yyyy'),'too small');
+INSERT INTO Viewing VALUES('CR56','PA14',TO_DATE('8-03-2005','dd/mm/yyyy'),'small');
+INSERT INTO Viewing VALUES('CR76','PG4',TO_DATE('20-02-2005','dd/mm/yyyy'),'');
+INSERT INTO Viewing VALUES('CR76','PG4',TO_DATE('13-04-2005','dd/mm/yyyy'),'');
+INSERT INTO Viewing VALUES('CR56','PG4',TO_DATE('26-05-2005','dd/mm/yyyy'),'small');
+INSERT INTO Viewing VALUES('CR56','PG4',TO_DATE('13-06-2005','dd/mm/yyyy'),'');
+INSERT INTO Viewing VALUES('CR62','PG16',TO_DATE('7-08-2005','dd/mm/yyyy'),'good');
+INSERT INTO Viewing VALUES('CR62','PG21',TO_DATE('17-08-2005','dd/mm/yyyy'),'very big');
+INSERT INTO Viewing VALUES('CR74','P21',TO_DATE('18-07-2005','dd/mm/yyyy'),'good');
+
+
+--- Registration 
+INSERT INTO Registration VALUES('CR76','B005','SL41',TO_DATE('2-1-2004','dd/mm/yyyy'));
+INSERT INTO Registration VALUES('CR56','B003','SG37',TO_DATE('11-4-2003','dd/mm/yyyy'));
+INSERT INTO Registration VALUES('CR74','B003','SG37',TO_DATE('16-11-2002','dd/mm/yyyy'));
+INSERT INTO Registration VALUES('CR62','B007','SA9',TO_DATE('7-3-2004','dd/mm/yyyy'));
+------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------
+                                           F    I    N
+------------------------------------------------------------------------------------------------------

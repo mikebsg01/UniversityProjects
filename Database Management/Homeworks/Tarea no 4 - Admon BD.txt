@@ -1,0 +1,421 @@
+Materia: Administración de Bases de Datos
+Tarea: No. 4
+Nombre: Procedimientos Almacenados en PostgreSQL.
+--------------------------------------------------------------------------------------
+
+Fecha de Entrega:  20/Marzo/2019
+Modalidad: equipos de hasta 3 integrantes.
+
+
+Forma de Entregar:  entregar este archivo con los códigos solicitados
+                    al correo [ msigerardorr@gmail.com ]
+
+
+
+ASUNTO: Administracion BD - Tarea no 4
+
+MENSAJE:  escribir los nombres completos y expedientes de los integrantes de 
+          equipo (además de escribirlos dentro de este documento).
+
+
+--------------------------------------------------------------------------------------
+
+AUTORES DE LA TAREA no 4
+
+Expediente y Nombre completo de integrantes: 
+	258849		Michael Brandon Serrato Guerrero
+
+--------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+
+CREAR EL CÓDIGO plpgSQL DE LOS SIGUIENTES REQUERIMIENTOS:
+
+
+1. Escribir un procedimiento almacenado, llamado 'modificarPuestoSalario', para 
+   modificar el puesto y salario de un empleado cuando al empleado se le tenga que
+   modificar dichos campos,  pero antes de modificar los datos salvar la información 
+   actual de dicho empleado en un registro de la tabla de 'historial_empleados'. El 
+   método regresa un valor entero distinto de CERO indicando si hubo algún error en 
+   las operaciones: siendo un valor de CERO si no hubo error y 1 si hubo error.
+  
+
+   Crear la siguiente metadata:
+
+     CREATE DOMAIN puesto Varchar(10) Check(VALUE IN ('GERENTE','ANALISTA','OPERADOR'));
+
+     CREATE TABLE empleados(
+       empclave INT PRIMARY KEY,
+       empNombre VARCHAR(60) NOT NULL,  -- JOSE ALFREDO 
+       empApellidos VARCHAR(60) NOT NULL,  -- JIMENEZ SANDOVAL
+       empPuesto puesto NOT NULL,
+       empSalario DECIMAL(8,2) NOT NULL
+     );
+
+     CREATE TABLE historial_empleados(
+       histClave SERIAL PRIMARY KEY,
+       histempclave INT PRIMARY KEY,
+       histempPuesto puesto NOT NULL,
+       histempSalario DECIMAL(8,2) NOT NULL,
+       histfecharegistro TIMESTAMP without time zone DEFAULT localtimestamp
+     );
+     
+     Ingresar los datos siguientes:
+
+     INSERT INTO empleados VALUES(100,'GUILLERMO','ZAMORA ESCAMILLA','GERENTE',52000);
+     INSERT INTO empleados VALUES(101,'LILIA',  'ARANDA SANCHEZ','ANALISTA',38000);
+     INSERT INTO empleados VALUES(102,'LUCERO', 'ROSAS LOPEZ','OPERADOR',28500);
+     INSERT INTO empleados VALUES(103,'PABLO',  'LOPEZ NARANJO','OPERADOR',28500);
+     INSERT INTO empleados VALUES(104,'MARIANA','BASALDUA TORRES','OPERADOR',28500);
+  
+     CREATE OR REPLACE FUNCTION modificarPuestoSalario( .  .  . ) RETURNS ...
+  
+
+     Especificación del método:
+
+       - El método recibe como entrada la clave del empleado, el nuevo puesto y el nuevo
+         salario.
+
+       - El método salva el registro actual en la tabla 'historial_empleados'.
+
+       - El método actualiza el registro de la tabla 'empleados'.
+     ----------------------------------------------------------------------------------
+
+     Casos de Prueba:
+
+       1. Modificar el puesto del empleado clave = 104 a puesto = 'CONTRALOR' y salario = 41000
+            - Mostrar salida de consola y despliegue de tablas
+
+       2. Modificar el puesto del empleado clave = 101 a puesto = 'GERENTE' y salario = 48500
+            - Mostrar salida de consola y despliegue de tablas
+
+       3. Modificar el puesto del empleado clave = 103 a puesto = 'ANALISTA' y salario = 35000
+            - Mostrar salida de consola y despliegue de tablas
+
+       -----------------------------------------------------------------------------------
+
+/* Código: */
+
+CREATE OR REPLACE FUNCTION modificarPuestoSalario(_empclave INT, nuevoPuesto Varchar(10), nuevoSalario DECIMAL(8,2))
+RETURNS int AS $$
+DECLARE
+	tmpEmpleado empleados;
+BEGIN
+	BEGIN
+		SELECT * INTO tmpEmpleado FROM empleados WHERE empclave = _empclave;
+
+		INSERT INTO historial_empleados (histempclave, histempPuesto, histempSalario)
+		VALUES(tmpEmpleado.empclave, tmpEmpleado.empPuesto, tmpEmpleado.empSalario);
+
+		UPDATE empleados SET empPuesto = nuevoPuesto, empSalario = nuevoSalario
+		WHERE empclave = _empclave;
+	EXCEPTION WHEN others THEN
+		RETURN 1;
+	END;
+	RETURN 0;
+END
+$$ LANGUAGE 'plpgsql';
+
+/* Fin del Código */
+
+     Testear el procedimiento:
+         - Mostrar la salida de la consola y pegarla en esta tarea.
+
+	>> Caso de Prueba 1:
+
+		 modificarpuestosalario 
+		------------------------
+				      1
+		(1 row)
+
+ 	>> Caso de Prueba 2:
+
+		 modificarpuestosalario 
+		------------------------
+				      0
+		(1 row)
+
+	>> Caso de Prueba 3:
+
+		 modificarpuestosalario 
+		------------------------
+				      0
+		(1 row)
+
+      	>> SELECT de la tabla  'empleados':
+
+		 empclave | empnombre |   empapellidos   | emppuesto | empsalario 
+		----------+-----------+------------------+-----------+------------
+		      102 | LUCERO    | ROSAS LOPEZ      | OPERADOR  |   28500.00
+		      104 | MARIANA   | BASALDUA TORRES  | OPERADOR  |   28500.00
+		      100 | GUILLERMO | ZAMORA ESCAMILLA | GERENTE   |   52000.00
+		      101 | LILIA     | ARANDA SANCHEZ   | GERENTE   |   48500.00
+		      103 | PABLO     | LOPEZ NARANJO    | ANALISTA  |   35000.00
+		(5 rows)
+
+	>> SELECT de la tabla  'historial_empleados':
+
+		 histclave | histempclave | histemppuesto | histempsalario |     histfecharegistro      
+		-----------+--------------+---------------+----------------+----------------------------
+			 1 |          101 | ANALISTA      |       38000.00 | 2019-03-21 04:29:08.330659
+			 2 |          103 | OPERADOR      |       28500.00 | 2019-03-21 04:30:30.837523
+		(4 rows)
+
+
+2. Escribir un procedimiento almacenado, que se deberá llamar:
+      
+         'contarCaracteresEnNombreDeEmpleados', 
+
+   el cual regresa la cantidad de empleados procesados y calcula el número de caracteres 
+   que tiene el nombre de un empleado y a la vez insertar un registro en la tabla llamada 
+
+         'empleados_conteos' 
+
+   donde se registra la clave del empleado, su nombre, la cantidad de caracteres de su 
+   nombre, el promedio de caracteres que hay en todos los nombres y qué cantidad hay de
+   diferencia entre la cantidad del empleado y el promedio:
+
+      CREATE TABLE empleados_conteos(
+       empcclave INT PRIMARY KEY,
+       empcNombre VARCHAR(60) NOT NULL,  -- JOSE ALFREDO 
+       empcCantidadCaracteres INT DEFAULT 0,
+       empcPromediocaracteres INT DEFAULT 0,
+       empcDesviacion INT DEFAULT 0
+     ); 
+
+     La tabla 'empleados_conteos' deberá quedar de la siguiente manera luego de ejecutar
+     el procedimiento llamado 'contarCaracteresEnNombreDeEmpleados': 
+     
+
+       Clave  Nombre     CantidadCaracteres PromedioCaracteres  Desviacion
+       --------------------------------------------------------------------
+        100  'GUILLERMO'      9                  6                 3
+        101  'LILIA'          5                  6                -1
+        102  'LUCERO'         6                  6                 0
+        103  'PABLO'          5                  6                -1
+        104  'MARIANA'        7                  6                 1
+       --------------------------------------------------------------------
+
+      
+       Especificación del método:
+
+         - Antes de ejecutar el método 'contarCaracteresEnNombreDeEmpleados' la tabla
+           'empleados_conteos' deberá existir en la base de datos.           
+
+         - El método debe borrar los datos de la tabla 'empleados_conteos' antes de 
+           iniciar el cálculo.
+
+         - Comenzará el cálculo y paralelamente insertará los registros en la tabla de
+           conteos.
+
+         - Al final actualiza la tabla de conteos con los datos de promedio y desviación
+           por cada registro.
+      -----------------------------------------------------------------------------------
+
+       Recordar la función: 
+        tmp := substr(intext,i,1);  
+        ROUND(67.456,2)
+
+/* Código: */
+
+CREATE OR REPLACE FUNCTION contarCaracteresEnNombreDeEmpleados()
+RETURNS INT AS $$
+DECLARE
+	promedio INT := 0;
+	longitud INT := 0;
+	cantidadProcesados INT := 0;
+	TmpRow empleados;
+BEGIN
+	DELETE FROM empleados_conteos WHERE empcclave > 0;
+	SELECT FLOOR(AVG(LENGTH(empNombre))) INTO promedio FROM empleados;
+
+	FOR TmpRow IN (SELECT * FROM empleados ORDER BY empclave ASC) LOOP
+		longitud := LENGTH(TmpRow.empNombre);
+	
+		INSERT INTO empleados_conteos (empcclave, empcNombre, empcCantidadCaracteres, empcPromediocaracteres, empcDesviacion)
+		VALUES (TmpRow.empclave, TmpRow.empNombre, longitud, promedio, longitud - promedio);
+
+		cantidadProcesados := cantidadProcesados + 1;
+	END LOOP;
+
+	RETURN cantidadProcesados;
+END
+$$ LANGUAGE 'plpgsql';
+
+/* Fin del Código. */
+
+      Testear el procedimiento:
+         - Mostrar la salida de la consola y pegarla en esta tarea.
+
+      >> SALIDA DE LA CONSOLA (valor de retorno de la función "contarCaracteresEnNombreDeEmpleados"):
+
+		 contarcaracteresennombredeempleados 
+		-------------------------------------
+					           5
+		(1 row)
+
+
+      >> SELECT de la tabla  'empleados_conteos':
+
+	 empcclave | empcnombre | empccantidadcaracteres | empcpromediocaracteres | empcdesviacion 
+	-----------+------------+------------------------+------------------------+----------------
+	       100 | GUILLERMO  |                      9 |                      6 |              3
+	       101 | LILIA      |                      5 |                      6 |             -1
+	       102 | LUCERO     |                      6 |                      6 |              0
+	       103 | PABLO      |                      5 |                      6 |             -1
+	       104 | MARIANA    |                      7 |                      6 |              1
+	(5 rows)
+
+
+
+
+
+3. Escribir un procedimiento almacenado para asignar un inmueble a un empleado corredor de
+   bienes-inmuebles. El método se llamará 'asignarInmuebleCorredor'.
+
+       CREATE TABLE corredoresinmuebles(
+         corrclave INT PRIMARY KEY,
+         corrNombre VARCHAR(60) NOT NULL,  -- JOSE ALFREDO 
+         corrApellidos VARCHAR(60) NOT NULL  -- JIMENEZ SANDOVAL
+       );
+ 
+       CREATE TABLE inmuebles(
+         inmclave INT PRIMARY KEY,
+         inmciudad VARCHAR(40) NOT NULL,
+         inmcolonia VARCHAR(40) NOT NULL,
+         inmcalle_numero VARCHAR(40) NOT NULL
+       );
+
+       CREATE TABLE corredor_inmuebles(
+         corrclave INT,
+         inmclave  INT, 
+         coinmfechaAsignacion  TIMESTAMP without time zone       
+       );
+
+       Especificación del método
+
+          - El equipo captura los datos previos sobre las tablas de 'corredoresinmuebles' y
+            'inmuebles'.
+
+          - El método 'asignarInmuebleCorredor' recibe como entraada la clave del corredor
+            de inmuebles y la clave del inmueble. 
+
+          - Se verifica que el corredor no tenga más de 3 inmuebles asignados, de ser así, el
+            método no inserta en la tabla 'corredor_inmuebles' y regresa el valor de 1; si
+            el número de inmuebles asignado al corredor es menor de 3, el método procede a
+            insertar en la tabla 'corredor_inmuebles' y regresa el valor de 0.
+
+          - ¿Qué se inserta en la tabla 'corredor_inmuebles'? 
+                  * La clave del corredor
+                  * La clave del inmueble
+                  * La fecha y hora del momento: función now()
+
+       -----------------------------------------------------------------------------------
+
+       Casos de Prueba:
+
+          1. Ir asignando inmuebles a cada corredor y verificar que el procedimiento detecta un
+             corredor con TRES inmuebles asignados; el método impide asignar más inmuebles en 
+             ese caso.
+   
+                - Mostrar salida de consola y despliegue de tablas
+
+       -----------------------------------------------------------------------------------
+
+/* Código: */
+
+CREATE OR REPLACE FUNCTION asignarInmuebleCorredor(claveCorredor INT, claveInmueble INT)
+RETURNS INT AS $$
+DECLARE
+	corredor corredoresinmuebles;
+	inmueble inmuebles;
+	inmueblesAsignados INT[];
+	cantidad INT := 0;
+BEGIN
+	BEGIN
+		SELECT * INTO STRICT corredor FROM corredoresinmuebles WHERE corrclave = claveCorredor;
+		SELECT * INTO STRICT inmueble FROM inmuebles WHERE inmclave = claveInmueble;
+		inmueblesAsignados := ARRAY(SELECT inmclave FROM corredor_inmuebles WHERE corrclave = claveCorredor);
+		cantidad := ARRAY_LENGTH(inmueblesAsignados, 1);
+
+		IF claveInmueble = ANY(inmueblesAsignados) THEN
+			RAISE EXCEPTION 'Este inmueble ya ha sido asignado al corredor previamente.';
+		END IF;
+
+		IF cantidad >= 3 THEN
+			-- RAISE EXCEPTION 'Cantidad máxima de inmuebles por corredor excedida.';
+			RETURN 1;
+		END IF;
+
+		INSERT INTO corredor_inmuebles (corrclave, inmclave, coinmfechaAsignacion)
+		VALUES (corredor.corrclave, inmueble.inmclave, now());
+
+		RETURN 0;
+	EXCEPTION WHEN NO_DATA_FOUND THEN
+		RAISE EXCEPTION 'El corredor o inmueble no ha sido encontrado.';
+	END;
+	RETURN 1;
+END;
+$$ LANGUAGE 'plpgsql';
+
+/* Fin del Código. */
+
+	-- Mis INSERTS (los datos usados para el testeo del procedimiento almacenado):
+
+	INSERT INTO corredoresinmuebles (corrclave, corrNombre, corrApellidos)
+	VALUES	(1, 'Michael', 'Serrato'),
+		(2, 'Juan', 'Perez'),
+		(3, 'Luis', 'Sanchez'),
+		(4, 'Pedro', 'Jimenez');
+
+	INSERT INTO inmuebles (inmclave, inmciudad, inmcolonia, inmcalle_numero)
+	VALUES	(1, 'Querétaro', 'Juriquilla', 'Luz #135'),
+		(2, 'Querétaro', 'Milenio', 'Angeles #435'),
+		(3, 'CDMX', 'Santa Fe', 'Acceso 12'),
+		(4, 'CDMX', 'Reforma', 'Lote 3 int 42'),
+		(5, 'Guanjuato', 'Posos', '#7');
+
+      Testear el procedimiento:
+         - Mostrar la salida de la consola y pegarla en esta tarea.
+
+      >> SALIDA DE LA CONSOLA (Valores de retorno de la función "asignarInmuebleCorredor"):
+
+	SELECT asignarInmuebleCorredor(1, 1);
+	 asignarinmueblecorredor 
+	-------------------------
+		               0
+	(1 row)
+
+	SELECT asignarInmuebleCorredor(1, 2);
+	 asignarinmueblecorredor 
+	-------------------------
+		               0
+	(1 row)
+
+	SELECT asignarInmuebleCorredor(1, 3);
+	 asignarinmueblecorredor 
+	-------------------------
+		               0
+	(1 row)
+
+
+	SELECT asignarInmuebleCorredor(1, 4);
+	 asignarinmueblecorredor 
+	-------------------------
+		               1
+	(1 row)
+
+        
+      SELECT de la tabla  'corredor_inmuebles':
+
+	 corrclave | inmclave |    coinmfechaasignacion    
+	-----------+----------+----------------------------
+		 1 |        1 | 2019-03-21 07:27:35.64749
+		 1 |        2 | 2019-03-21 07:29:34.651475
+		 1 |        3 | 2019-03-21 07:29:48.762505
+	(3 rows)
+
+
+
+------------------------------------------------------------------------------------------------------
+                                           F    I    N
+------------------------------------------------------------------------------------------------------
