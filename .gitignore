@@ -1,3 +1,7 @@
 *.o
 *.obj
 *.exe
+*.class
+*.rar
+*.zip
+*.ini
